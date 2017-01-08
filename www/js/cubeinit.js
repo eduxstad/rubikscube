@@ -2,6 +2,7 @@ document.addEventListener( 'keypress', onDocumentKeyPress, false );
 document.addEventListener( 'keydown',  onDocumentKeyDown, false );
 
 document.getElementById("switchsidebar").addEventListener("click", switchsidebar);
+document.getElementById("generate").addEventListener("click", generateSolves);
 document.getElementById("scramble").addEventListener("click", scramble);
 document.getElementById("solve").addEventListener("click", solve);
 document.getElementById("fold").addEventListener("click", fold);
@@ -131,9 +132,34 @@ function onChangeTransparent(value){
 }
 
 function onBottomUpSolver(){
-	cubeConsole.cube.setIsInSolverMode(true);
-	var solver = new BottomupSolver(cubeConsole.cube.getState());
-	solver.solve().forEach(op=>cubeConsole.cube.command(op));
+		cubeConsole.cube.setIsInSolverMode(true);
+		var solver = new BottomupSolver(cubeConsole.cube.getState());
+		solver.solve().forEach(op=>cubeConsole.cube.command(op));
+}
+
+function generateSolves(){
+	//cubeConsole.cube.setIsInSolverMode(true);
+	//var solver = new BottomupSolver(cubeConsole.cube.getState());
+	//solver.solve().forEach(op=>cubeConsole.cube.command(op));
+	var n = 1000;
+	var data = [];
+	console.log("Generating ", n, "random states");
+	while(n>0) {	
+		cubeConsole.cube.randomize();
+		console.log("Random State: ", cubeConsole.cube.getState());
+		//var randomStateJSON = JSON.stringify(cubeConsole.cube.getState());
+		data.push(cubeConsole.cube.getState());
+		
+		var solver = new BottomupSolver(cubeConsole.cube.getState());
+		//console.log("SolveOps:", solver.solve());
+		//var solveJSON = JSON.stringify(solver.solve());
+		var solveArray = solver.solve();
+		console.log("SolveArray: ", solveArray);
+		data.push(solveArray);
+
+		n = n-1;
+	}
+	console.log(JSON.stringify(data));
 }
 
 function setInitialPosition(){
