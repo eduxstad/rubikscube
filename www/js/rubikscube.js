@@ -154,7 +154,7 @@ class Cubie{
 		cubieState.name.split('').forEach(facetName=>
 			{
 				let faceletName = cubieState.facetToLocMap[facetName];
-				console.log("setting facet: ", facetName, faceletName, cubieState.name);
+				//console.log("setting facet: ", facetName, faceletName, cubieState.name);
 				let facet = new Facet(facetName, cubeConfig.facetConfigs[facetName].color, this,
 					 cubeConfig.rotationOnFoldedConfigs[faceletName].axis, cubeConfig.faceletConfigs[faceletName].position, faceletName);
 				facets[facetName] = facet;
@@ -505,8 +505,10 @@ class RubiksCube{
 	randomize(){
 		let saved = this.enableAnimation;
 		this.enableAnimation = false;
-		getRandomOps().forEach(x=>this.command(x));
+		var ops = getRandomOps();
+		ops.forEach(x=>this.command(x));
 		this.enableAnimation = saved;
+		return ops
 	}
 
 	randomizeWithAnimation() {
