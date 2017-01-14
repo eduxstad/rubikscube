@@ -27,6 +27,67 @@ cubeConsole.renderer.domElement.addEventListener('touchstart', onTouchStart, fal
 cubeConsole.renderer.domElement.addEventListener('touchmove', onTouchMove, false);
 cubeConsole.renderer.domElement.addEventListener('touchend', onTouchEnd, false);
 
+function numberify(op) {
+	var num = 9999;
+	switch (op) {
+		case "U":
+			num = 0;
+			break;
+		case "D":
+			num = 1;
+			break;
+		case "R":
+			num = 2;
+			break;
+		case "L":
+			num = 3;
+			break;
+		case "F":
+			num = 4;
+			break;
+		case "B":
+			num = 5;
+			break;
+		case "U'":
+			num = 6;
+			break;
+		case "D'":
+			num = 7;
+			break;
+		case "R'":
+			num = 8;
+			break;
+		case "L'":
+			num = 9;
+			break;
+		case "F'":
+			num = 10;
+			break;
+		case "B'":
+			num = 11;
+			break;
+		case "UU":
+			num = 12;
+			break;
+		case "DD":
+			num = 13;
+			break;
+		case "RR":
+			num = 14;
+			break;
+		case "LL":
+			num = 15;
+			break;
+		case "FF":
+			num = 16;
+			break;
+		case "BB":
+			num = 17;
+			break;
+	}
+	return num/20;
+}
+
 function scramble() { cmd ('S');}
 function solve() { cmd ('V');}
 function fold() {
@@ -138,28 +199,61 @@ function onBottomUpSolver(){
 }
 
 function generateSolves(){
-	//cubeConsole.cube.setIsInSolverMode(true);
-	//var solver = new BottomupSolver(cubeConsole.cube.getState());
-	//solver.solve().forEach(op=>cubeConsole.cube.command(op));
+	/*var net = new brain.NeuralNetwork();
+	
+	//[[0.2,0.5],[0.3,0],[0,0.3],[0.35,0.05],[0.5,0.2],[0.2,0.5],[0,0.3],[0.2,0.5],[0.4,0.1],[0.05,0.35]]
+	var data1 = [{input: [0], output: [0.3]},
+           {input: [0.05], output: [0.35]},
+           {input: [0.1], output: [0.4]},
+           {input: [0.15], output: [0.45]},
+           {input: [0.2], output: [0.5]},
+           {input: [0.25], output: [0.55]},
+           {input: [0.3], output: [0]},
+           {input: [0.35], output: [0.05]},
+           {input: [0.4], output: [0.1]},
+           {input: [0.45], output: [0.15]},
+           {input: [0.5], output: [0.2]},
+           {input: [0.55], output: [0.25]}];
+    console.log(data1);
+	net.train(data1);
+           
+	var output = net.run([0.2]);
+	console.log(output);*/
+	
 	var n = 1000;
-	var data = [];
+	var data = []
+	var datasubsetScramble = [];
+	var datasubsetSolve = [];
 	console.log("Generating ", n, "random states");
 	while(n>0) {
-		cubeConsole.cube.randomize();
-		console.log("Random State: ", cubeConsole.cube.getState());
-		//var randomStateJSON = JSON.stringify(cubeConsole.cube.getState());
-		data.push(cubeConsole.cube.getState());
+		console.log("iteration number:")
+		var ops = cubeConsole.cube.randomize();
+		//console.log("Random State: ", cubeConsole.cube.getState());
+		ops.forEach(op=>datasubsetScramble.push(numberify(op)));
+		//console.log(ops);
 
 		var solver = new BottomupSolver(cubeConsole.cube.getState());
-		//console.log("SolveOps:", solver.solve());
-		//var solveJSON = JSON.stringify(solver.solve());
 		var solveArray = solver.solve();
-		console.log("SolveArray: ", solveArray);
-		data.push(solveArray);
-    cubeConsole.cube.setState(SINGMASTER_SOLVED_STATE);
+		//console.log("SolveArray: ", solveArray);
+		solveArray.forEach(op=>datasubsetSolve.push(numberify(op)));
+    	cubeConsole.cube.setState(SINGMASTER_SOLVED_STATE);
+    	
+    	var object = {};
+    	object["input"] = datasubsetScramble;
+    	object["output"] = datasubsetSolve;
+    	data.push(object);
+    	datasubsetScramble = [];
+    	datasubsetSolve = [];
 		n = n-1;
 	}
-	console.log(JSON.stringify(data));
+	
+	
+	console.log(data);
+	var net = new brain.NeuralNetwork();
+	net.train(data, {log: true, errorThresh: 0.0001});
+	var output = net.run([0.2]);
+	console.log(output);
+	
 }
 
 function setInitialPosition(){

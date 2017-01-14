@@ -81,7 +81,7 @@ var reverseOp = function(op){
 
 function getRandomOps(){
     var scrambleNumber = document.getElementById("scramble#").value;
-    console.log("Scramble Number: ", scrambleNumber);
+    //console.log("Scramble Number: ", scrambleNumber);
     var opsArray = Array.from(Array(20).keys()).map(x=>OPERATIONS[getRandom(0, OPERATIONS.length - 1)]);
     opsArray.length = scrambleNumber;
     return opsArray;
