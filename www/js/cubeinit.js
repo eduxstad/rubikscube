@@ -144,19 +144,19 @@ function generateSolves(){
 	var n = 1000;
 	var data = [];
 	console.log("Generating ", n, "random states");
-	while(n>0) {	
+	while(n>0) {
 		cubeConsole.cube.randomize();
 		console.log("Random State: ", cubeConsole.cube.getState());
 		//var randomStateJSON = JSON.stringify(cubeConsole.cube.getState());
 		data.push(cubeConsole.cube.getState());
-		
+
 		var solver = new BottomupSolver(cubeConsole.cube.getState());
 		//console.log("SolveOps:", solver.solve());
 		//var solveJSON = JSON.stringify(solver.solve());
 		var solveArray = solver.solve();
 		console.log("SolveArray: ", solveArray);
 		data.push(solveArray);
-
+    cubeConsole.cube.setState(SINGMASTER_SOLVED_STATE);
 		n = n-1;
 	}
 	console.log(JSON.stringify(data));
