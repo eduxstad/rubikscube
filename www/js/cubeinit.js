@@ -3,6 +3,8 @@ document.addEventListener( 'keydown',  onDocumentKeyDown, false );
 
 document.getElementById("switchsidebar").addEventListener("click", switchsidebar);
 document.getElementById("generate").addEventListener("click", generateSolves);
+document.getElementById("neuralscramble").addEventListener("click", neuralScramble);
+document.getElementById("neuralsolve").addEventListener("click", neuralSolve);
 document.getElementById("scramble").addEventListener("click", scramble);
 document.getElementById("solve").addEventListener("click", solve);
 document.getElementById("fold").addEventListener("click", fold);
@@ -26,6 +28,8 @@ cubeConsole.renderer.domElement.addEventListener('mouseup', onMouseUp, false);
 cubeConsole.renderer.domElement.addEventListener('touchstart', onTouchStart, false);
 cubeConsole.renderer.domElement.addEventListener('touchmove', onTouchMove, false);
 cubeConsole.renderer.domElement.addEventListener('touchend', onTouchEnd, false);
+
+var net = new brain.NeuralNetwork();
 
 function numberify(op) {
 	var num = 9999;
@@ -86,6 +90,69 @@ function numberify(op) {
 			break;
 	}
 	return num/20;
+}
+function deNumberify(op) {
+	var num = "S";
+
+	op = op*20;
+	op = Math.round(op);
+	switch (op) {
+		case 0:
+			num = "U";
+			break;
+		case 1:
+			num = "D";
+			break;
+		case 2:
+			num = "R";
+			break;
+		case 3:
+			num = "L";
+			break;
+		case 4:
+			num = "F";
+			break;
+		case 5:
+			num = "B";
+			break;
+		case 6:
+			num = "U'";
+			break;
+		case 7:
+			num = "D'";
+			break;
+		case 8:
+			num = "R'";
+			break;
+		case 9:
+			num = "L'";
+			break;
+		case 10:
+			num = "F'";
+			break;
+		case 11:
+			num = "B'";
+			break;
+		case 12:
+			num = "UU";
+			break;
+		case 13:
+			num = "DD";
+			break;
+		case 14:
+			num = "RR";
+			break;
+		case 15:
+			num = "LL";
+			break;
+		case 16:
+			num = "FF";
+			break;
+		case 17:
+			num = "BB";
+			break;
+	}
+	return num;
 }
 
 function scramble() { cmd ('S');}
@@ -200,7 +267,7 @@ function onBottomUpSolver(){
 
 function generateSolves(){
 	/*var net = new brain.NeuralNetwork();
-	
+
 	//[[0.2,0.5],[0.3,0],[0,0.3],[0.35,0.05],[0.5,0.2],[0.2,0.5],[0,0.3],[0.2,0.5],[0.4,0.1],[0.05,0.35]]
 	var data1 = [{input: [0], output: [0.3]},
            {input: [0.05], output: [0.35]},
@@ -216,11 +283,11 @@ function generateSolves(){
            {input: [0.55], output: [0.25]}];
     console.log(data1);
 	net.train(data1);
-           
+
 	var output = net.run([0.2]);
 	console.log(output);*/
-	
-	var n = 1000;
+
+	var n = 10000;
 	var data = []
 	var datasubsetScramble = [];
 	var datasubsetSolve = [];
@@ -232,28 +299,59 @@ function generateSolves(){
 		ops.forEach(op=>datasubsetScramble.push(numberify(op)));
 		//console.log(ops);
 
-		var solver = new BottomupSolver(cubeConsole.cube.getState());
+		/*var solver = new BottomupSolver(cubeConsole.cube.getState());
 		var solveArray = solver.solve();
 		//console.log("SolveArray: ", solveArray);
 		solveArray.forEach(op=>datasubsetSolve.push(numberify(op)));
-    	cubeConsole.cube.setState(SINGMASTER_SOLVED_STATE);
-    	
-    	var object = {};
-    	object["input"] = datasubsetScramble;
-    	object["output"] = datasubsetSolve;
-    	data.push(object);
-    	datasubsetScramble = [];
-    	datasubsetSolve = [];
+    cubeConsole.cube.setState(SINGMASTER_SOLVED_STATE);*/
+
+		var temp = datasubsetScramble;
+		for (var i = temp.length; i > 0; i--) {
+			  var op = temp[i-1];
+			  if (op < 0.3) {
+					  datasubsetSolve.push(op + 0.3);
+				} else {
+					  datasubsetSolve.push(op - 0.3);
+				}
+		}
+
+    var object = {};
+    object["input"] = datasubsetScramble;
+    object["output"] = datasubsetSolve;
+    data.push(object);
+    datasubsetScramble = [];
+    datasubsetSolve = [];
 		n = n-1;
 	}
-	
-	
+
+
+
+
 	console.log(data);
-	var net = new brain.NeuralNetwork();
-	net.train(data, {log: true, errorThresh: 0.0001});
-	var output = net.run([0.2]);
+
+	net.train(data, {log: true, errorThresh: 0.0001, iterations: 20000});
+	var output = net.run([0.3, 0.3]);
 	console.log(output);
-	
+
+	cubeConsole.cube.setState(SINGMASTER_SOLVED_STATE);
+
+}
+
+var neuralInput;
+
+function neuralScramble() {
+	neuralInput = cubeConsole.cube.randomize();
+}
+
+function neuralSolve() {
+	var inputArray = [];
+	neuralInput.forEach(op=>inputArray.push(numberify(op)));
+	console.log(inputArray);
+	var neuralOutput = net.run(inputArray);
+	console.log(neuralOutput);
+	var outputOps = [];
+	neuralOutput.forEach(op=>outputOps.push(deNumberify(op)));
+  outputOps.forEach(op=>cubeConsole.cube.command(op));
 }
 
 function setInitialPosition(){
