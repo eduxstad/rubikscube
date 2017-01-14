@@ -504,8 +504,8 @@ class RubiksCube{
 
 	randomize(){
 		let saved = this.enableAnimation;
-		this.enableAnimation = false;
-		getRandomOps().forEach(x=>this.rotate(x));
+		this.enableAnimation = true;
+		getRandomOps().forEach(x=>this.command(x));
 		this.enableAnimation = saved;
 	}
 
