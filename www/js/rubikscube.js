@@ -473,7 +473,7 @@ class RubiksCube{
 		let op = this.getNextOp();
 		if (op != ""){
 			if (op == "S"){
-				this.randomize();
+				this.randomizeWithAnimation();
 			}
 			else if(op == "O"){
 				this.fold();
@@ -504,10 +504,19 @@ class RubiksCube{
 
 	randomize(){
 		let saved = this.enableAnimation;
+		this.enableAnimation = false;
+		getRandomOps().forEach(x=>this.command(x));
+		this.enableAnimation = saved;
+	}
+
+	randomizeWithAnimation() {
+		let saved = this.enableAnimation;
 		this.enableAnimation = true;
 		getRandomOps().forEach(x=>this.command(x));
 		this.enableAnimation = saved;
 	}
+
+
 
 	getCubeState(){
 		return this.cubeState.clone();
