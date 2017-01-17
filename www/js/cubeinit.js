@@ -7,6 +7,7 @@ document.getElementById("neuralscramble").addEventListener("click", neuralScramb
 document.getElementById("neuralsolve").addEventListener("click", neuralSolve);
 document.getElementById("scramble").addEventListener("click", scramble);
 document.getElementById("solve").addEventListener("click", solve);
+document.getElementById("reset").addEventListener("click", resetCube);
 document.getElementById("fold").addEventListener("click", fold);
 document.getElementById("execute").addEventListener("click", execute);
 document.getElementById("speed").addEventListener("change", onChangeSpeed);
@@ -29,7 +30,7 @@ cubeConsole.renderer.domElement.addEventListener('touchstart', onTouchStart, fal
 cubeConsole.renderer.domElement.addEventListener('touchmove', onTouchMove, false);
 cubeConsole.renderer.domElement.addEventListener('touchend', onTouchEnd, false);
 
-var net = new brain.NeuralNetwork();
+var net = new brain.NeuralNetwork({hiddenLayers: [12,12,12],learningRate: 0.3});
 
 function numberify(op) {
 	var num = 9999;
@@ -265,6 +266,10 @@ function onBottomUpSolver(){
 		solver.solve().forEach(op=>cubeConsole.cube.command(op));
 }
 
+function resetCube() {
+	cubeConsole.cube.setState(SINGMASTER_SOLVED_STATE);
+}
+
 function generateSolves(){
 	/*var net = new brain.NeuralNetwork();
 
@@ -287,7 +292,7 @@ function generateSolves(){
 	var output = net.run([0.2]);
 	console.log(output);*/
 
-	var n = 10000;
+	var n = 20000;
 	var data = []
 	var datasubsetScramble = [];
 	var datasubsetSolve = [];
@@ -329,18 +334,18 @@ function generateSolves(){
 
 	console.log(data);
 
-	net.train(data, {log: true, errorThresh: 0.0001, iterations: 20000});
+	net.train(data, {log: true, errorThresh: 0.00005, iterations: 500});
 	var output = net.run([0.3, 0.3]);
 	console.log(output);
 
-	cubeConsole.cube.setState(SINGMASTER_SOLVED_STATE);
+	resetCube();
 
 }
 
 var neuralInput;
 
 function neuralScramble() {
-	neuralInput = cubeConsole.cube.randomize();
+	neuralInput = cubeConsole.cube.randomizeWithAnimation();
 }
 
 function neuralSolve() {

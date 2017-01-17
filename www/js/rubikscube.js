@@ -508,14 +508,16 @@ class RubiksCube{
 		var ops = getRandomOps();
 		ops.forEach(x=>this.command(x));
 		this.enableAnimation = saved;
-		return ops
+		return ops;
 	}
 
 	randomizeWithAnimation() {
 		let saved = this.enableAnimation;
 		this.enableAnimation = true;
-		getRandomOps().forEach(x=>this.command(x));
+		var ops = getRandomOps()
+		ops.forEach(x=>this.command(x));
 		this.enableAnimation = saved;
+		return ops;
 	}
 
 
