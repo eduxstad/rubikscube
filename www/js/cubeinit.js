@@ -7,6 +7,7 @@ document.getElementById("scramble").addEventListener("click", scramble);
 document.getElementById("solve").addEventListener("click", solve);
 document.getElementById("fold").addEventListener("click", fold);
 document.getElementById("execute").addEventListener("click", execute);
+document.getElementById("special").addEventListener("click", special);
 document.getElementById("speed").addEventListener("change", onChangeSpeed);
 //document.getElementById("command").addEventListener( 'keypress', onDocumentKeyPress);
 document.getElementById("getposition").addEventListener("click", getPosition);
@@ -26,6 +27,27 @@ cubeConsole.renderer.domElement.addEventListener('mouseup', onMouseUp, false);
 cubeConsole.renderer.domElement.addEventListener('touchstart', onTouchStart, false);
 cubeConsole.renderer.domElement.addEventListener('touchmove', onTouchMove, false);
 cubeConsole.renderer.domElement.addEventListener('touchend', onTouchEnd, false);
+
+function special() {
+	var startingState = cubeConsole.cube.getState();
+	var input = specialInput.value;
+	console.log(cubeConsole.cube.getState()); 
+	//console.log(SINGMASTER_SOLVED_STATE);
+	cycle(input);
+	var cycleNum = 1;
+	console.log(cubeConsole.cube.getState()); 
+	while(cubeConsole.cube.getState() != startingState) {
+		cycle(input);
+		cycleNum++;
+		console.log(cycleNum);
+		console.log(cubeConsole.cube.getState());
+	}
+	
+}
+function cycle(input) {
+	input.split(' ').forEach(x=>cubeConsole.cube.command(x));
+	
+}
 
 function scramble() { cmd ('S');}
 function solve() { cmd ('V');}

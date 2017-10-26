@@ -197,9 +197,9 @@ class RubiksCube{
 		this.setState(state);
 		this.isInAnimation = false;
 		this.commands = "";
-		this.enableAnimation = true;
+		this.enableAnimation = false;
 		this.setIsInSolverMode(false);
-		this.timePerAnimationMove = 5000/20; //in ms
+		this.timePerAnimationMove = 1; //in ms
 
 	}
 
@@ -463,9 +463,9 @@ class RubiksCube{
 
 	command(command){
 		this.commands = this.commands.concat(command);
-		if (!this.isInAnimation){
+		//if (!this.isInAnimation){
 			this.doNextCommand();
-		}
+		//}
 	}
 
 

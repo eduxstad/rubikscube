@@ -5,7 +5,7 @@
 class CubeConsole{
 	constructor(initialState, parentControl){
 		this.cube = new RubiksCube(initialState, new THREE.Scene());
-		this.cube.enableAnimation = true;
+		this.cube.enableAnimation = false;
 		this.inputText = "";
 		this.inputTimer = null;
 
