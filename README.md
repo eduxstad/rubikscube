@@ -1,4 +1,4 @@
-#Rubiks Cube Solver by using Neural Networks
+# Rubiks Cube Solver by using Neural Networks
 
 Solve a Rubiks Cube with a Neural Network. First, change the scramble number to a lower value such a 4 or 5, then generate the neural network (open the console to view progress) then you can use neural scramble and then neural solve to see the neural net in action!
 
